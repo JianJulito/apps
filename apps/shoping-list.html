@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocery List App - Items</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="style/shoping.css">
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="settings-icon" onclick="toggleSidebar()">
+            <i class="fa fa-cogs"></i>
+        </div>
+        <div class="shopping-lists-text">Shopping Lists</div>
+    </div>
+    
+
+    <div class="sidebar" id="mySidebar">
+        <span class="closebtn" onclick="closeSidebar()">&times;</span>
+        <a href="add.html">Add Item</a>
+        <a href="login-registration.html" onclick="logout()" class="logout-link"><i class="fa fa-sign-out"></i> Log Out</a>
+    </div>
+
+    <div class="container">
+        <div class="cart-icon">
+            <i class="fa fa-shopping-cart"></i>
+            <span class="badge" id="cartCount">0</span>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search by name, brand, or store...">
+        </div>
+
+        <label for="sortOptions">Sort By:</label>
+        <select id="sortOptions" onchange="sortItems(this.value)">
+            <option value="name">Name</option>
+            <option value="price">Price</option>
+            <option value="brand">Brand</option>
+            <option value="store">Store</option>
+        </select>
+
+        <label for="filterCategory">Category:</label>
+        <select id="filterCategory" onchange="filterByCategory(this.value)">
+            <option value="">All</option>
+            <option value="coffee">Coffee</option>
+            <option value="fruits">Fruits</option>
+            <option value="vegetables">Vegetables</option>
+            <option value="softdrinks">Soft Drinks</option>
+            <option value="snacks">Snacks</option>
+        </select>
+
+        <div id="groceryList" class="grocery-grid"></div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            let sidebar = document.getElementById("mySidebar");
+            if (sidebar.style.left === "0px") {
+                sidebar.style.left = "-250px";
+            } else {
+                sidebar.style.left = "0px";
+            }
+        }
+
+        function closeSidebar() {
+            document.getElementById("mySidebar").style.left = "-250px";
+        }
+
+        function filterByCategory(category) {
+            displayItems('', category);
+        }
+
+        function searchItems() {
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            displayItems(searchQuery);
+        }
+
+        function sortItems(criteria) {
+            const groceryList = document.getElementById('groceryList');
+            let items = JSON.parse(localStorage.getItem('items')) || [];
+
+            items.sort((a, b) => {
+                if (criteria === 'name') {
+                    return a.productName.localeCompare(b.productName);
+                } else if (criteria === 'price') {
+                    return a.price - b.price;
+                } else if (criteria === 'brand') {
+                    return a.brand.localeCompare(b.brand);
+                } else if (criteria === 'store') {
+                    return a.store.localeCompare(b.store);
+                }
+                return 0;
+            });
+
+            groceryList.innerHTML = '';
+            items.forEach((item, index) => {
+                const itemCard = createItemCard(item, index);
+                groceryList.innerHTML += itemCard;
+            });
+        }
+
+        function createItemCard(item, index) {
+    return `
+        <div class="grocery-item">
+            <img src="${item.productImage}" alt="${item.productName}" width="100">
+            <h3>${item.productName}</h3>
+            <p>Brand: ${item.brand}</p>
+            <p>Store: ${item.store}</p>
+            <p>Weight: ${item.weight}</p>
+            <p>Category: ${item.category}</p>
+            <p>Price: ₱ ${item.price}</p>
+            <div style="margin-bottom: 10px;"> <!-- Add margin for spacing -->
+            <input type="checkbox" id="item-${index}" onchange="toggleCheck(${index})">
+            </div>
+            <button class="add-to-cart-button" onclick="addToCart(${index})">
+                <i class="fa fa-cart-plus"></i> Add to Cart
+            </button>
+        </div>
+    `;
+}
+
+
+        function toggleCheck(index) {
+    const checkbox = document.getElementById(`item-${index}`);
+    if (checkbox.checked) {
+        console.log(`${index} is checked`);
+        // Additional logic for when an item is checked can be added here
+    } else {
+        console.log(`${index} is unchecked`);
+        // Additional logic for when an item is unchecked can be added here
+    }
+}
+
+        function displayItems(searchQuery = '', category = '') {
+            const groceryList = document.getElementById('groceryList');
+            groceryList.innerHTML = '';
+
+            let items = JSON.parse(localStorage.getItem('items')) || [];
+
+            items.forEach((item, index) => {
+                if ((category === '' || item.category === category) &&
+                    (searchQuery === '' ||
+                    item.productName.toLowerCase().includes(searchQuery) ||
+                    item.brand.toLowerCase().includes(searchQuery) ||
+                    item.store.toLowerCase().includes(searchQuery))) {
+
+                    const itemCard = createItemCard(item, index);
+                    groceryList.innerHTML += itemCard;
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            displayItems();
+            document.getElementById('searchInput').addEventListener('input', searchItems);
+        });
+    </script>
+</body>
+</html>

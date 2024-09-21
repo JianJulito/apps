@@ -1,0 +1,218 @@
+  /* General Styles */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #1809e7;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    position: relative;
+}
+
+label {
+    font-size: 16px;
+    color: #333;
+    
+}
+
+.shopping-lists-text {
+    font-size: 20px; /* Set font size */
+   font-weight: bold; /* Make text bold */
+    margin: 10px;
+    color: white; /* Change text color to white */
+    margin-left: -50px; /* Center alignment */
+     margin-right: auto; /* Center alignment */
+    text-align: center; /* Center text */
+   flex-grow: 1; /* Allow text to grow and center */
+}
+select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    margin: 20px auto;
+    max-width: 500px;
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px 0 0 4px;
+    outline: none;
+}
+
+.top-bar {
+ display: flex;
+ justify-content: space-between; /* Adjusted to space between items */
+ align-items: center; /* Center vertically */
+ padding: 10px;
+ background-color: #1809e7;
+}
+
+.settings-icon, .hamburger-icon {
+    cursor: pointer;
+    padding: 10px;
+    background-color: #1809e7;
+    border-radius: 5px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.cart-icon {
+    font-size: 24px;
+    color: #1809e7;
+    cursor: pointer;
+    margin: 5px;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.cart-icon .badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+}
+
+.sidebar {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: -250px;
+    background-color: #0c61e1;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    z-index: 1000;
+}
+
+.sidebar a {
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 20px;
+    color: white;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #0a4d9e;
+}
+
+.closebtn {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    font-size: 30px;
+    color: white;
+}
+
+.grocery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    grid-auto-rows: minmax(150px, auto);
+    max-width: 1200px;
+    margin: auto;
+}
+
+.grocery-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.grocery-item img {
+    max-width: 100%;
+    height: auto;
+}
+
+.grocery-item h3 {
+    font-size: 18px;
+    color: #333;
+}
+
+.grocery-item p {
+    color: #777;
+    margin: 10px;
+}
+
+.add-to-cart-button {
+    background-color: #0c61e1;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-to-cart-button i {
+    margin-right: 2px;
+    font-size: 18px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .grocery-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .search-bar {
+        flex-direction: column;
+        max-width: 100%;
+    }
+
+    .search-bar input[type="text"] {
+        border-radius: 4px;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-icon, .hamburger-icon {
+        width: 35px;
+        height: 35px;
+    }
+
+    .grocery-item h3 {
+        font-size: 16px;
+    }
+
+    .grocery-item p {
+        font-size: 14px;
+    }
+}

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      background-color: #0056b3;
+      color: white;
+      padding: 20px;
+
+      position: relative;
+      text-align: center;
+    }
+
+    .header h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .toggle-button {
+      margin: 20px;
+      padding: 10px 20px;
+      background-color: #0056b3;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .toggle-button:hover {
+      background-color: #0056b3;
+    }
+
+    form {
+      background-color: white;
+      padding: 20px;
+      max-width: 400px;
+      margin: 20px auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
+
+    form input, form select, form button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+    }
+
+    form button {
+      background-color: #0056b3;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+
+    form button:hover {
+      background-color: #0056b3;
+    }
+
+    .item-list h3 {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .container {
+      position: absolute;
+      top: 50%;
+      left: 15px;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: white;
+      font-size: 24px;
+    }
+
+    .sidebar {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #0056b3;
+      overflow-x: hidden;
+      transition: 0.5s;
+      padding-top: 60px;
+      z-index: 1;
+    }
+
+    .sidebar a {
+      padding: 10px 15px;
+      text-decoration: none;
+      font-size: 18px;
+      color: white;
+      display: flex;
+      align-items: center;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color:#0056b3;
+    }
+
+    .closebtn {
+      position: absolute;
+      top: 0;
+      right: 25px;
+      font-size: 36px;
+      color: white;
+    }
+
+    .grocery-item {
+      background-color: white;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      margin: 10px;
+      display: inline-block;
+      width: calc(50% - 20px); /* Two columns */
+      box-sizing: border-box;
+    }
+
+    .edit-button, .delete-button {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+    }
+
+    .edit-button {
+      background-color: #0056b3;
+    }
+
+    .delete-button {
+      background-color:#0056b3;
+    }
+
+    @media (max-width: 600px) {
+      .grocery-item {
+        width: 100%; /* One column on small screens */
+      }
+    }
+
+    .custom-swal {
+      background-color: #ffffff;
+      color: #0056b3;
+      border: 1px solid #0056b3;
+      border-radius: 10px;
+    }
+    
+    .custom-swal button {
+      background-color: #0056b3;
+      color: white;
+      border-radius: 5px;
+      border: none;
+      padding: 10px 15px;
+    }
+
+    .custom-swal button:hover {
+      background-color:#0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div id="main">
+    <div class="header">
+      <div class="container" onclick="toggleSidebar()">
+        <i class="fas fa-cog"></i>
+      </div>
+      <h2>Add New Item</h2>
+    </div>
+
+    <button class="toggle-button" onclick="toggleForm()"> Add Item Form</button>
+
+    <form id="addItemForm">
+      <input type="hidden" id="editIndex" value="">
+      <input type="text" id="productName" placeholder="Product Name" required>
+      <input type="text" id="brand" placeholder="Brand" required>
+      <input type="number" id="price" placeholder="Price" required>
+      <input type="text" id="weight" placeholder="Weight/Volume" required>
+      <input type="number" id="quantity" placeholder="Quantity" required>
+      <input type="text" id="store" placeholder="Store" required>
+      <select id="category">
+        <option value="coffee">Coffee</option>
+        <option value="fruits">Fruits</option>
+        <option value="vegetables">Vegetables</option>
+        <option value="softdrinks">Soft Drinks</option>
+        <option value="snacks">Snacks</option>
+      </select>
+      <input type="file" id="productImage" accept="image/*">
+      <button type="submit">Add to List</button>
+    </form>
+
+    <div id="itemList" class="item-list">
+      <h3>Grocery List</h3>
+      <div id="groceryList"></div>
+    </div>
+
+    <div id="mySidebar" class="sidebar">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">&times;</a>
+      <a href="shoping-list.html">Shopping list</a>
+      <a href="login-registration.html" onclick="logout()" class="logout-link"><i class="fa fa-sign-out"></i> Log Out</a>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById("mySidebar");
+      sidebar.style.width = sidebar.style.width === "250px" ? "0" : "250px";
+    }
+
+    function closeSidebar() {
+      document.getElementById("mySidebar").style.width = "0";
+    }
+
+    function toggleForm() {
+      const form = document.getElementById('addItemForm');
+      form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
+    }
+
+    function displayItems() {
+      const groceryList = document.getElementById('groceryList');
+      groceryList.innerHTML = '';
+
+      let items = JSON.parse(localStorage.getItem('items')) || [];
+      items.forEach((item, index) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'grocery-item';
+        itemDiv.innerHTML = `
+          <img src="${item.productImage}" alt="${item.productName}" style="max-width: 50%; height: auto;">
+          <h4>${item.productName}</h4>
+          <p>Brand: ${item.brand}</p>
+          <p>Price: ${item.price}</p>
+          <p>Weight: ${item.weight}</p>
+          <p>Quantity: ${item.quantity}</p>
+          <p>Store: ${item.store}</p>
+          <p>Category: ${item.category}</p>
+          <button class="edit-button" onclick="showEditForm(${index})">Edit</button>
+          <button class="delete-button" onclick="confirmDelete(${index})">Delete</button>
+        `;
+        groceryList.appendChild(itemDiv);
+      });
+    }
+
+    function showEditForm(index) {
+      let items = JSON.parse(localStorage.getItem('items'));
+      const item = items[index];
+
+      swal({
+        title: "Edit Item",
+        content: {
+          element: "div",
+          attributes: {
+            innerHTML: `
+              <input type="text" id="editProductName" value="${item.productName}" placeholder="Product Name" required>
+              <input type="text" id="editBrand" value="${item.brand}" placeholder="Brand" required>
+              <input type="number" id="editPrice" value="${item.price}" placeholder="Price" required>
+              <input type="text" id="editWeight" value="${item.weight}" placeholder="Weight/Volume" required>
+              <input type="number" id="editQuantity" value="${item.quantity}" placeholder="Quantity" required>
+              <input type="text" id="editStore" value="${item.store}" placeholder="Store" required><br>
+              <select id="editCategory">
+                <option value="coffee" ${item.category === 'coffee' ? 'selected' : ''}>Coffee</option>
+                <option value="fruits" ${item.category === 'fruits' ? 'selected' : ''}>Fruits</option>
+                <option value="vegetables" ${item.category === 'vegetables' ? 'selected' : ''}>Vegetables</option>
+                <option value="softdrinks" ${item.category === 'softdrinks' ? 'selected' : ''}>Soft Drinks</option>
+                <option value="snacks" ${item.category === 'snacks' ? 'selected' : ''}>Snacks</option>
+              </select>
+              <input type="file" id="editProductImage" accept="image/*">
+            `,
+          },
+        },
+        buttons: {
+          cancel: true,
+          confirm: {
+            text: "Save",
+            closeModal: false,
+          },
+        },
+        className: "custom-swal" // Custom class for styling
+      }).then((willEdit) => {
+        if (willEdit) {
+          const updatedItem = {
+            productName: document.getElementById('editProductName').value,
+            brand: document.getElementById('editBrand').value,
+            price: document.getElementById('editPrice').value,
+            weight: document.getElementById('editWeight').value,
+            quantity: document.getElementById('editQuantity').value,
+            store: document.getElementById('editStore').value,
+            category: document.getElementById('editCategory').value,
+          };
+
+          const productImage = document.getElementById('editProductImage').files[0];
+          const reader = new FileReader();
+          reader.onloadend = function() {
+            updatedItem.productImage = productImage ? reader.result : item.productImage;
+            items[index] = updatedItem;
+            localStorage.setItem('items', JSON.stringify(items));
+            displayItems();
+            swal("Item updated successfully!", { icon: "success" });
+          };
+
+          if (productImage) {
+            reader.readAsDataURL(productImage);
+          } else {
+            reader.onloadend();
+          }
+        }
+      });
+    }
+
+    function confirmDelete(index) {
+      swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this item!",
+        icon: "warning",
+        buttons: {
+          cancel: "Cancel",
+          confirm: {
+            text: "Delete",
+            value: true,
+            visible: true,
+            className: "btn-confirm",
+            closeModal: true,
+          },
+        },
+        dangerMode: true,
+        className: "custom-swal" // Custom class for styling
+      }).then((willDelete) => {
+        if (willDelete) {
+          deleteItem(index);
+          swal("Poof! Your item has been deleted!", { icon: "success", buttons: false, timer: 1500 });
+        } else {
+          swal("Your item is safe!");
+        }
+      });
+    }
+
+    function deleteItem(index) {
+      let items = JSON.parse(localStorage.getItem('items'));
+      items.splice(index, 1);
+      localStorage.setItem('items', JSON.stringify(items));
+      displayItems();
+    }
+
+    document.getElementById('addItemForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const productName = document.getElementById('productName').value;
+      const brand = document.getElementById('brand').value;
+      const price = document.getElementById('price').value;
+      const weight = document.getElementById('weight').value;
+      const quantity = document.getElementById('quantity').value;
+      const store = document.getElementById('store').value;
+      const category = document.getElementById('category').value;
+      const productImage = document.getElementById('productImage').files[0];
+
+      const reader = new FileReader();
+      reader.onloadend = function() {
+        const newItem = {
+          productName,
+          brand,
+          price,
+          weight,
+          quantity,
+          store,
+          category,
+          productImage: reader.result,
+        };
+
+        let items = JSON.parse(localStorage.getItem('items')) || [];
+        items.push(newItem);
+        localStorage.setItem('items', JSON.stringify(items));
+        displayItems();
+        document.getElementById('addItemForm').reset();
+        swal("Item added successfully!", { icon: "success" });
+      };
+
+      if (productImage) {
+        reader.readAsDataURL(productImage);
+      }
+    });
+
+    window.onload = displayItems; // Load items on page load
+  </script>
+</body>
+</html>
